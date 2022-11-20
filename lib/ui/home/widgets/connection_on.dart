@@ -29,6 +29,7 @@ class ConnectionOnPage extends HookConsumerWidget {
         Center(
           child: GestureDetector(
             onLongPressStart: (LongPressStartDetails details) async {
+              ref.read(recordingStateProvider.notifier).state = true;
               await ref.read(bleProvider.notifier).findMessageCharacteristic();
               if (await Vibration.hasVibrator() ?? false) {
                 Vibration.vibrate();
@@ -46,6 +47,7 @@ class ConnectionOnPage extends HookConsumerWidget {
                 Vibration.vibrate();
               }
               listener?.cancel();
+              ref.read(recordingStateProvider.notifier).state = false;
             },
             child: const PlayerButton(),
           ),
