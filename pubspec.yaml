@@ -11,17 +11,27 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.5
   modal_bottom_sheet: ^2.1.2
-  flutter_ble_lib: ^2.3.2
   flutter_neumorphic: ^3.2.0
   permission_handler: ^10.2.0
   location: ^4.4.0
-  riverpod: ^2.1.1
-  pretty_logger: ^1.0.0
+  riverpod: ^1.0.3
   flutter_blue: ^0.8.0
+  freezed: ^2.2.1
+  build_runner: ^2.3.2
+  hooks_riverpod: ^1.0.3
+  flutter_secure_storage: ^6.0.0
+  vibration: ^1.7.6
+  mic_stream: ^0.6.2
+  rxdart: ^0.26.0
+  logger: ^1.1.0
+  ble_reader: ^0.1.1
+  flutter_hooks: ^0.18.5+1
+  flutter_sound: ^8.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.1
+  vibration: ^1.7.6
 flutter:
   uses-material-design: true
