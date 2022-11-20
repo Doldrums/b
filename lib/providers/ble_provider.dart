@@ -1,5 +1,4 @@
 import 'package:ble_reader/ble_reader.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,8 +9,8 @@ import '../models/connection_details.dart';
 final flutterDatabase =
     Provider<FlutterSecureStorage>((ref) => const FlutterSecureStorage());
 
-final bleProvider = StateNotifierProvider<BLENotifier, BleState>(
-    (ref) => BLENotifier());
+final bleProvider =
+    StateNotifierProvider<BLENotifier, BleState>((ref) => BLENotifier());
 
 final recordingStateProvider = StateProvider<bool>((ref) => false);
 final characteristicProvider =
@@ -19,9 +18,25 @@ final characteristicProvider =
 
 const int mtuInBytes = 512;
 
+final connectionStateStreamProvider =
+    StreamProvider.autoDispose<BluetoothState>((ref) async* {
+  final instance = ref.watch(bleProvider);
+  late final Stream stream;
+  instance.maybeWhen(
+      connected: (ConnectionDetails details) {
+        stream = details.instance.state;
+      },
+      orElse: () => stream = const Stream.empty());
+
+  await for (final value in stream) {
+    yield value as BluetoothState;
+  }
+});
+
 class BLENotifier extends StateNotifier<BleState> {
   late ConnectionDetails details;
   late BluetoothCharacteristic messageCharacteristic;
+  late Stream<BluetoothState> stateStream;
 
   BLENotifier() : super(const BleState.off()) {
     init();
@@ -33,6 +48,7 @@ class BLENotifier extends StateNotifier<BleState> {
     details = ConnectionDetails(
       instance: flutterBlue,
     );
+    stateStream = flutterBlue.state;
     await Future.delayed(
       const Duration(seconds: 5),
     );
@@ -62,14 +78,21 @@ class BLENotifier extends StateNotifier<BleState> {
 
   Future<void> findMessageCharacteristic() async {
     List<BluetoothService> services = await details.device!.discoverServices();
-    var messageService = services.firstWhere((s) => s.uuid == Guid('0000b81d-0000-1000-8000-00805f9b34fb'));
+    var messageService = services.firstWhere(
+        (s) => s.uuid == Guid('0000b81d-0000-1000-8000-00805f9b34fb'));
 
-    messageCharacteristic = messageService.characteristics.firstWhere((c) => c.uuid == Guid('7db3e235-3608-41f3-a03c-955fcbd2ea4b'));
+    messageCharacteristic = messageService.characteristics.firstWhere(
+        (c) => c.uuid == Guid('7db3e235-3608-41f3-a03c-955fcbd2ea4b'));
   }
 
   Future<void> sendSamples(List<int> voice) async {
     for (var start = 0; start < voice.length; start += mtuInBytes) {
-      await messageCharacteristic.write(voice.sublist(start, start + mtuInBytes > voice.length ? voice.length : start + mtuInBytes),
+      await messageCharacteristic.write(
+          voice.sublist(
+              start,
+              start + mtuInBytes > voice.length
+                  ? voice.length
+                  : start + mtuInBytes),
           withoutResponse: true);
     }
   }

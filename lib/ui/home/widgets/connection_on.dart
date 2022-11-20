@@ -34,7 +34,10 @@ class ConnectionOnPage extends HookConsumerWidget {
                 Vibration.vibrate();
               }
 
-              stream = await MicStream.microphone(sampleRate: 44100, audioFormat: AudioFormat.ENCODING_PCM_16BIT, channelConfig: ChannelConfig.CHANNEL_IN_MONO);
+              stream = await MicStream.microphone(
+                  sampleRate: 44100,
+                  audioFormat: AudioFormat.ENCODING_PCM_16BIT,
+                  channelConfig: ChannelConfig.CHANNEL_IN_MONO);
               listener = stream!.listen((samples) =>
                   ref.read(bleProvider.notifier).sendSamples(samples));
             },

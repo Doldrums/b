@@ -102,7 +102,7 @@ class AvailableDevice extends StatelessWidget {
           ),
           child: NeumorphicButton(
             padding: const EdgeInsets.all(12.0),
-            onPressed: (result.advertisementData.connectable) ? onTap : () {},
+            onPressed: (result.advertisementData.connectable) ? onTap : null,
             style: NeumorphicStyle(
               depth: -10,
               intensity: 0.6,
@@ -113,7 +113,7 @@ class AvailableDevice extends StatelessWidget {
               ),
             ),
             child: Text(
-              'CONNECT',
+              (result.advertisementData.connectable) ? 'CONNECT' : 'HIDDEN',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: (result.advertisementData.connectable)
@@ -124,20 +124,107 @@ class AvailableDevice extends StatelessWidget {
         ),
       ),
       children: <Widget>[
-        _buildAdvRow(
-            context, 'Complete Local Name', result.advertisementData.localName),
-        _buildAdvRow(context, 'Tx Power Level',
-            '${result.advertisementData.txPowerLevel ?? 'N/A'}'),
-        _buildAdvRow(context, 'Manufacturer Data',
-            getNiceManufacturerData(result.advertisementData.manufacturerData)),
-        _buildAdvRow(
-            context,
-            'Service UUIDs',
-            (result.advertisementData.serviceUuids.isNotEmpty)
-                ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
-                : 'N/A'),
-        _buildAdvRow(context, 'Service Data',
-            getNiceServiceData(result.advertisementData.serviceData)),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 32.0, right: 32.0, top: 12.0, bottom: 8.0),
+          child: Row(
+            children: [
+              Text(
+                "Complete Local Name",
+                style: Theme.of(context).textTheme.bodyLarge!,
+              ),
+              const Spacer(),
+              Text(
+                result.advertisementData.localName,
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 32.0, right: 32.0, bottom: 8.0),
+          child: Row(
+            children: [
+              Text(
+                "Tx Power Level",
+                style: Theme.of(context).textTheme.bodyLarge!,
+              ),
+              const Spacer(),
+              Text(
+                '${result.advertisementData.txPowerLevel ?? 'N/A'}',
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 32.0, right: 32.0, bottom: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  "Manufacturer Data",
+                  style: Theme.of(context).textTheme.bodyLarge!,
+                ),
+              ),
+              Text(
+                getNiceManufacturerData(
+                    result.advertisementData.manufacturerData),
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 32.0, right: 32.0, bottom: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  "Service UUIDs",
+                  style: Theme.of(context).textTheme.bodyLarge!,
+                ),
+              ),
+              Text(
+                (result.advertisementData.serviceUuids.isNotEmpty)
+                    ? result.advertisementData.serviceUuids
+                        .join(', ')
+                        .toUpperCase()
+                    : 'N/A',
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 32.0, right: 32.0, bottom: 8.0),
+          child: Row(
+            children: [
+              Text(
+                "Service Data",
+                style: Theme.of(context).textTheme.bodyLarge!,
+              ),
+              const Spacer(),
+              Text(
+                getNiceServiceData(result.advertisementData.serviceData),
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
