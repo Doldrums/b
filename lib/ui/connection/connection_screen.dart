@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../main.dart';
 import '../../providers/ble_provider.dart';
+import '../common/neumorphic_progress_indicator.dart';
 
 class ConnectionScreen extends HookConsumerWidget {
   const ConnectionScreen({Key? key}) : super(key: key);
@@ -184,21 +185,7 @@ class ConnectionScreen extends HookConsumerWidget {
           },
         ),
       ),
-      orElse: () {
-        return const Scaffold(
-          body: Center(
-            child: SizedBox(
-              width: 200,
-              child: NeumorphicProgressIndeterminate(
-                style: ProgressStyle(
-                  accent: Color(0xFFfc7b03),
-                  variant: Color(0xFFfc7b03),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+      orElse: () => const NeumorphicProgressIndicator(),
     );
   }
 }
