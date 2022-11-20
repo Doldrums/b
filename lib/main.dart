@@ -19,9 +19,6 @@ class MyApp extends StatelessWidget {
     return ProviderScope(
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
         home: NeumorphicTheme(
           theme: const NeumorphicThemeData(
             defaultTextColor: Color(0xFF303E57),

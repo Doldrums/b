@@ -13,8 +13,8 @@ class ConnectionScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final BLE = ref.watch(bleProvider);
-    return BLE.maybeWhen(
+    final ble = ref.watch(bleProvider);
+    return ble.maybeWhen(
       disconnected: (details) => Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -58,7 +58,7 @@ class ConnectionScreen extends HookConsumerWidget {
                 builder: (c, snapshot) => Column(
                   children: snapshot.data!
                       .map(
-                        (r) => ScanResultTile(
+                        (r) => AvailableDevice(
                           result: r,
                           onTap: () {
                             ref.read(bleProvider.notifier).connect(r);
@@ -114,6 +114,7 @@ class ConnectionScreen extends HookConsumerWidget {
                               style: TextStyle(
                                 color: Color(0xFF303E57),
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -173,6 +174,7 @@ class ConnectionScreen extends HookConsumerWidget {
                               style: TextStyle(
                                 color: Color(0xFF303E57),
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

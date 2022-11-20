@@ -1,12 +1,9 @@
-// Copyright 2017, Paul DeMarco.
-// All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-class ScanResultTile extends StatelessWidget {
-  const ScanResultTile({Key? key, required this.result, this.onTap})
+class AvailableDevice extends StatelessWidget {
+  const AvailableDevice({Key? key, required this.result, this.onTap})
       : super(key: key);
 
   final ScanResult result;
@@ -91,9 +88,40 @@ class ScanResultTile extends StatelessWidget {
     return ExpansionTile(
       title: _buildTitle(context),
       leading: Text(result.rssi.toString()),
-      trailing: ElevatedButton(
-        onPressed: (result.advertisementData.connectable) ? onTap : null,
-        child: const Text('CONNECT'),
+      trailing: SizedBox(
+        width: 100,
+        child: Neumorphic(
+          style: NeumorphicStyle(
+            depth: 80,
+            color: const Color(0xFFF8F9FC),
+            intensity: 0.3,
+            surfaceIntensity: 1.0,
+            boxShape: NeumorphicBoxShape.roundRect(
+              BorderRadius.circular(8),
+            ),
+          ),
+          child: NeumorphicButton(
+            padding: const EdgeInsets.all(12.0),
+            onPressed: (result.advertisementData.connectable) ? onTap : () {},
+            style: NeumorphicStyle(
+              depth: -10,
+              intensity: 0.6,
+              surfaceIntensity: 1.0,
+              color: const Color(0xFFF8F9FC),
+              boxShape: NeumorphicBoxShape.roundRect(
+                BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'CONNECT',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: (result.advertisementData.connectable)
+                      ? const Color(0xFFfc7b03)
+                      : Colors.black),
+            ),
+          ),
+        ),
       ),
       children: <Widget>[
         _buildAdvRow(
@@ -111,189 +139,6 @@ class ScanResultTile extends StatelessWidget {
         _buildAdvRow(context, 'Service Data',
             getNiceServiceData(result.advertisementData.serviceData)),
       ],
-    );
-  }
-}
-
-class ServiceTile extends StatelessWidget {
-  final BluetoothService service;
-  final List<CharacteristicTile> characteristicTiles;
-
-  const ServiceTile(
-      {Key? key, required this.service, required this.characteristicTiles})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (characteristicTiles.length > 0) {
-      return ExpansionTile(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Service'),
-            Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.caption?.color))
-          ],
-        ),
-        children: characteristicTiles,
-      );
-    } else {
-      return ListTile(
-        title: Text('Service'),
-        subtitle:
-            Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}'),
-      );
-    }
-  }
-}
-
-class CharacteristicTile extends StatelessWidget {
-  final BluetoothCharacteristic characteristic;
-  final List<DescriptorTile> descriptorTiles;
-  final VoidCallback? onReadPressed;
-  final VoidCallback? onWritePressed;
-  final VoidCallback? onNotificationPressed;
-
-  const CharacteristicTile(
-      {Key? key,
-      required this.characteristic,
-      required this.descriptorTiles,
-      this.onReadPressed,
-      this.onWritePressed,
-      this.onNotificationPressed})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<int>>(
-      stream: characteristic.value,
-      initialData: characteristic.lastValue,
-      builder: (c, snapshot) {
-        final value = snapshot.data;
-        return ExpansionTile(
-          title: ListTile(
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Characteristic'),
-                Text(
-                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).textTheme.caption?.color))
-              ],
-            ),
-            subtitle: Text(value.toString()),
-            contentPadding: EdgeInsets.all(0.0),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.file_download,
-                  color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
-                ),
-                onPressed: onReadPressed,
-              ),
-              IconButton(
-                icon: Icon(Icons.file_upload,
-                    color: Theme.of(context).iconTheme.color?.withOpacity(0.5)),
-                onPressed: onWritePressed,
-              ),
-              IconButton(
-                icon: Icon(
-                    characteristic.isNotifying
-                        ? Icons.sync_disabled
-                        : Icons.sync,
-                    color: Theme.of(context).iconTheme.color?.withOpacity(0.5)),
-                onPressed: onNotificationPressed,
-              )
-            ],
-          ),
-          children: descriptorTiles,
-        );
-      },
-    );
-  }
-}
-
-class DescriptorTile extends StatelessWidget {
-  final BluetoothDescriptor descriptor;
-  final VoidCallback? onReadPressed;
-  final VoidCallback? onWritePressed;
-
-  const DescriptorTile(
-      {Key? key,
-      required this.descriptor,
-      this.onReadPressed,
-      this.onWritePressed})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Descriptor'),
-          Text('0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).textTheme.caption?.color))
-        ],
-      ),
-      subtitle: StreamBuilder<List<int>>(
-        stream: descriptor.value,
-        initialData: descriptor.lastValue,
-        builder: (c, snapshot) => Text(snapshot.data.toString()),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.file_download,
-              color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
-            ),
-            onPressed: onReadPressed,
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.file_upload,
-              color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
-            ),
-            onPressed: onWritePressed,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class AdapterStateTile extends StatelessWidget {
-  const AdapterStateTile({Key? key, required this.state}) : super(key: key);
-
-  final BluetoothState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.redAccent,
-      child: ListTile(
-        title: Text(
-          'Bluetooth adapter is ${state.toString().substring(15)}',
-          style: Theme.of(context).primaryTextTheme.subtitle1,
-        ),
-        trailing: Icon(
-          Icons.error,
-          color: Theme.of(context).primaryTextTheme.subtitle1?.color,
-        ),
-      ),
     );
   }
 }

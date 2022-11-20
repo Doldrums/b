@@ -44,6 +44,7 @@ class HomePage extends HookConsumerWidget {
             child: Center(
               child: RichText(
                 textAlign: TextAlign.left,
+                overflow: TextOverflow.ellipsis,
                 text: TextSpan(
                   text: 'Ooops...',
                   style: Theme.of(context).textTheme.headline2?.copyWith(

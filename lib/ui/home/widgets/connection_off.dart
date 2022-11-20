@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class ConnectionOffPage extends StatelessWidget {
@@ -59,6 +58,7 @@ class ConnectionOffPage extends StatelessWidget {
             child: Center(
               child: RichText(
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
                 text: TextSpan(
                   text: 'Global'.toUpperCase(),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -102,6 +102,7 @@ class ConnectionOffPage extends StatelessWidget {
                     style: const TextStyle(
                       color: Color(0xFF303E57),
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
