@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,7 +11,7 @@ class CustomAppBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recordingState = ref.watch(recordingStateProvider);
-    AsyncValue<BluetoothState> connectionState =
+    AsyncValue<BluetoothDeviceState> connectionState =
         ref.watch(connectionStateStreamProvider);
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -26,7 +27,50 @@ class CustomAppBar extends HookConsumerWidget {
             ),
             child: NeumorphicButton(
               padding: const EdgeInsets.all(12.0),
-              onPressed: () {},
+              onPressed: () {
+                connectionState.when(
+                  error: (e, stack) async {
+                    await showOkAlertDialog(
+                      context: context,
+                      title: 'Ooops...',
+                      message:
+                          "It seems seem that you are disconnected from another device. Let's connect again.",
+                      barrierDismissible: false,
+                    );
+                    ref.read(bleProvider.notifier).disconnect();
+                  },
+                  data: (data) async {
+                    if (data == BluetoothDeviceState.disconnected ||
+                        data == BluetoothDeviceState.disconnecting) {
+                      await showOkAlertDialog(
+                        context: context,
+                        title: 'Ooops...',
+                        message:
+                            "It seems seem that you are disconnected from another device. Let's connect again.",
+                        barrierDismissible: false,
+                      );
+                      ref.read(bleProvider.notifier).disconnect();
+                    } else {
+                      await showOkAlertDialog(
+                        context: context,
+                        title: 'Cheers!!!',
+                        message:
+                            "We checked everything, your connection is absolutely stable.",
+                        barrierDismissible: false,
+                      );
+                    }
+                  },
+                  loading: () async {
+                    await showOkAlertDialog(
+                      context: context,
+                      title: 'Cheers!!!',
+                      message:
+                          "We checked everything, your connection is absolutely stable.",
+                      barrierDismissible: false,
+                    );
+                  },
+                );
+              },
               style: NeumorphicStyle(
                 depth: -10,
                 boxShape: NeumorphicBoxShape.roundRect(
@@ -64,7 +108,7 @@ class CustomAppBar extends HookConsumerWidget {
                 ),
                 data: (state) {
                   switch (state) {
-                    case BluetoothState.off:
+                    case BluetoothDeviceState.disconnected:
                       return Row(
                         children: const [
                           Icon(
@@ -79,7 +123,7 @@ class CustomAppBar extends HookConsumerWidget {
                           ),
                         ],
                       );
-                    case BluetoothState.on:
+                    case BluetoothDeviceState.connected:
                       return !recordingState
                           ? Row(
                               children: const [
@@ -109,7 +153,7 @@ class CustomAppBar extends HookConsumerWidget {
                                 ),
                               ],
                             );
-                    case BluetoothState.turningOff:
+                    case BluetoothDeviceState.disconnecting:
                       return Row(
                         children: const [
                           Icon(
@@ -124,7 +168,7 @@ class CustomAppBar extends HookConsumerWidget {
                           ),
                         ],
                       );
-                    case BluetoothState.turningOn:
+                    case BluetoothDeviceState.connecting:
                       return !recordingState
                           ? Row(
                               children: const [
@@ -154,51 +198,6 @@ class CustomAppBar extends HookConsumerWidget {
                                 ),
                               ],
                             );
-                    case BluetoothState.unauthorized:
-                      return Row(
-                        children: const [
-                          Icon(
-                            Icons.not_interested,
-                            color: Colors.grey,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              'Disconnected',
-                            ),
-                          ),
-                        ],
-                      );
-                    case BluetoothState.unavailable:
-                      return Row(
-                        children: const [
-                          Icon(
-                            Icons.not_interested,
-                            color: Colors.grey,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              'Disconnected',
-                            ),
-                          ),
-                        ],
-                      );
-                    case BluetoothState.unknown:
-                      return Row(
-                        children: const [
-                          Icon(
-                            Icons.not_interested,
-                            color: Colors.grey,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              'Disconnected',
-                            ),
-                          ),
-                        ],
-                      );
                   }
                 },
               ),

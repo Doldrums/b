@@ -19,17 +19,22 @@ final characteristicProvider =
 const int mtuInBytes = 512;
 
 final connectionStateStreamProvider =
-    StreamProvider.autoDispose<BluetoothState>((ref) async* {
+    StreamProvider.autoDispose<BluetoothDeviceState>((ref) async* {
   final instance = ref.watch(bleProvider);
   late final Stream stream;
   instance.maybeWhen(
-      connected: (ConnectionDetails details) {
-        stream = details.instance.state;
+      connected: (ConnectionDetails details) async {
+        final devices = await details.instance.connectedDevices;
+        if (devices.isNotEmpty) {
+          stream = devices.first.state;
+        } else {
+          stream = const Stream.empty();
+        }
       },
       orElse: () => stream = const Stream.empty());
 
   await for (final value in stream) {
-    yield value as BluetoothState;
+    yield value as BluetoothDeviceState;
   }
 });
 

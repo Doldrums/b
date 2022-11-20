@@ -143,8 +143,7 @@ class AvailableDevice extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-              left: 32.0, right: 32.0, bottom: 8.0),
+          padding: const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8.0),
           child: Row(
             children: [
               Text(
@@ -161,8 +160,7 @@ class AvailableDevice extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-              left: 32.0, right: 32.0, bottom: 8.0),
+          padding: const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,8 +181,7 @@ class AvailableDevice extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-              left: 32.0, right: 32.0, bottom: 8.0),
+          padding: const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -208,8 +205,7 @@ class AvailableDevice extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-              left: 32.0, right: 32.0, bottom: 8.0),
+          padding: const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8.0),
           child: Row(
             children: [
               Text(
