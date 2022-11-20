@@ -36,7 +36,7 @@ sequenceDiagram
 
 ## Setup 
 ```
-➜  folder ✗ git clone https://github.com/Doldrums/app_crypto.git
+➜  folder ✗ git clone https://github.com/Doldrums/b.git
 ➜  b git:(master) ✗ flutter pub get
 # in case there are conflicts in generated files
 ➜  b git:(master) ✗ flutter pub run build_runner build --delete-conflicting-outputs
