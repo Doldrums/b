@@ -5,7 +5,7 @@ import 'connection_details.dart';
 part 'ble_state.freezed.dart';
 
 @freezed
-abstract class BleState with _$BleState {
+class BleState with _$BleState {
   const factory BleState.off() = _BleStateOff;
   const factory BleState.disconnected({required ConnectionDetails details}) =
       _BleStateDisconnected;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ble_reader/ble_reader.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,35 +14,46 @@ final flutterDatabase =
 final bleProvider =
     StateNotifierProvider<BLENotifier, BleState>((ref) => BLENotifier());
 
-final recordingStateProvider = StateProvider<bool>((ref) => false);
-final characteristicProvider =
-    StateProvider<List<BluetoothCharacteristic>>((ref) => []);
-
 const int mtuInBytes = 512;
 
 final connectionStateStreamProvider =
-    StreamProvider.autoDispose<BluetoothDeviceState>((ref) async* {
+    StreamProvider<BluetoothDeviceState>((ref) async* {
   final instance = ref.watch(bleProvider);
-  late final Stream stream;
+  Stream<BluetoothDeviceState> stream = const Stream.empty();
+  yield BluetoothDeviceState.connected;
   instance.maybeWhen(
       connected: (ConnectionDetails details) async {
-        final devices = await details.instance.connectedDevices;
+        final devices = await details.instance!.connectedDevices;
         if (devices.isNotEmpty) {
           stream = devices.first.state;
-        } else {
-          stream = const Stream.empty();
-        }
+        } else {}
       },
-      orElse: () => stream = const Stream.empty());
+      orElse: () {});
+  yield* stream;
+});
 
-  await for (final value in stream) {
-    yield value as BluetoothDeviceState;
-  }
+final recordingStateProvider = StateProvider<bool>((ref) => false);
+
+final approximateDistance = StateProvider<num>((ref) {
+  late num approximateDistance;
+  final instance = ref.watch(bleProvider);
+  instance.maybeWhen(connected: (ConnectionDetails details) async {
+    num? rssi = details.rssi;
+    if (rssi != null) {
+      rssi = rssi.toDouble();
+      approximateDistance = pow(10, ((-25 - rssi) / (10 * 2.4)));
+    } else {
+      approximateDistance = 0;
+    }
+  }, orElse: () {
+    return approximateDistance = 0;
+  });
+  return approximateDistance;
 });
 
 class BLENotifier extends StateNotifier<BleState> {
   late ConnectionDetails details;
-  late BluetoothCharacteristic messageCharacteristic;
+  late BluetoothCharacteristic? messageCharacteristic;
   late Stream<BluetoothState> stateStream;
 
   BLENotifier() : super(const BleState.off()) {
@@ -72,6 +85,7 @@ class BLENotifier extends StateNotifier<BleState> {
         details = ConnectionDetails(
           instance: connectionManager,
           device: data.device,
+          rssi: data.rssi,
         );
       }
     } on Exception catch (_) {
@@ -83,6 +97,7 @@ class BLENotifier extends StateNotifier<BleState> {
 
   Future<void> findMessageCharacteristic() async {
     List<BluetoothService> services = await details.device!.discoverServices();
+    if (services.isEmpty) return;
     var messageService = services.firstWhere(
         (s) => s.uuid == Guid('0000b81d-0000-1000-8000-00805f9b34fb'));
 
@@ -91,8 +106,9 @@ class BLENotifier extends StateNotifier<BleState> {
   }
 
   Future<void> sendSamples(List<int> voice) async {
+    if (messageCharacteristic == null) return;
     for (var start = 0; start < voice.length; start += mtuInBytes) {
-      await messageCharacteristic.write(
+      await messageCharacteristic!.write(
           voice.sublist(
               start,
               start + mtuInBytes > voice.length

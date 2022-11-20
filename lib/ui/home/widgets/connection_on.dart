@@ -19,17 +19,17 @@ class ConnectionOnPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     StreamSubscription<List<int>>? listener;
     Stream<List<int>>? stream;
-
+    final distance = ref.watch(approximateDistance);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const CustomAppBar(),
         const Spacer(),
+        Center(child: Text('Distance $distance')),
         Center(
           child: GestureDetector(
             onLongPressStart: (LongPressStartDetails details) async {
               await ref.read(bleProvider.notifier).findMessageCharacteristic();
-
               if (await Vibration.hasVibrator() ?? false) {
                 Vibration.vibrate();
               }

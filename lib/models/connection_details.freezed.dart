@@ -16,8 +16,9 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ConnectionDetails {
-  FlutterBlue get instance => throw _privateConstructorUsedError;
+  FlutterBlue? get instance => throw _privateConstructorUsedError;
   BluetoothDevice? get device => throw _privateConstructorUsedError;
+  int? get rssi => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ConnectionDetailsCopyWith<ConnectionDetails> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $ConnectionDetailsCopyWith<$Res> {
           ConnectionDetails value, $Res Function(ConnectionDetails) then) =
       _$ConnectionDetailsCopyWithImpl<$Res, ConnectionDetails>;
   @useResult
-  $Res call({FlutterBlue instance, BluetoothDevice? device});
+  $Res call({FlutterBlue? instance, BluetoothDevice? device, int? rssi});
 }
 
 /// @nodoc
@@ -46,18 +47,23 @@ class _$ConnectionDetailsCopyWithImpl<$Res, $Val extends ConnectionDetails>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? instance = null,
+    Object? instance = freezed,
     Object? device = freezed,
+    Object? rssi = freezed,
   }) {
     return _then(_value.copyWith(
-      instance: null == instance
+      instance: freezed == instance
           ? _value.instance
           : instance // ignore: cast_nullable_to_non_nullable
-              as FlutterBlue,
+              as FlutterBlue?,
       device: freezed == device
           ? _value.device
           : device // ignore: cast_nullable_to_non_nullable
               as BluetoothDevice?,
+      rssi: freezed == rssi
+          ? _value.rssi
+          : rssi // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -70,7 +76,7 @@ abstract class _$$_ConnectionDetailsCopyWith<$Res>
       __$$_ConnectionDetailsCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({FlutterBlue instance, BluetoothDevice? device});
+  $Res call({FlutterBlue? instance, BluetoothDevice? device, int? rssi});
 }
 
 /// @nodoc
@@ -84,18 +90,23 @@ class __$$_ConnectionDetailsCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? instance = null,
+    Object? instance = freezed,
     Object? device = freezed,
+    Object? rssi = freezed,
   }) {
     return _then(_$_ConnectionDetails(
-      instance: null == instance
+      instance: freezed == instance
           ? _value.instance
           : instance // ignore: cast_nullable_to_non_nullable
-              as FlutterBlue,
+              as FlutterBlue?,
       device: freezed == device
           ? _value.device
           : device // ignore: cast_nullable_to_non_nullable
               as BluetoothDevice?,
+      rssi: freezed == rssi
+          ? _value.rssi
+          : rssi // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -103,16 +114,18 @@ class __$$_ConnectionDetailsCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_ConnectionDetails implements _ConnectionDetails {
-  const _$_ConnectionDetails({required this.instance, this.device});
+  const _$_ConnectionDetails({this.instance, this.device, this.rssi});
 
   @override
-  final FlutterBlue instance;
+  final FlutterBlue? instance;
   @override
   final BluetoothDevice? device;
+  @override
+  final int? rssi;
 
   @override
   String toString() {
-    return 'ConnectionDetails(instance: $instance, device: $device)';
+    return 'ConnectionDetails(instance: $instance, device: $device, rssi: $rssi)';
   }
 
   @override
@@ -122,11 +135,12 @@ class _$_ConnectionDetails implements _ConnectionDetails {
             other is _$_ConnectionDetails &&
             (identical(other.instance, instance) ||
                 other.instance == instance) &&
-            (identical(other.device, device) || other.device == device));
+            (identical(other.device, device) || other.device == device) &&
+            (identical(other.rssi, rssi) || other.rssi == rssi));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, instance, device);
+  int get hashCode => Object.hash(runtimeType, instance, device, rssi);
 
   @JsonKey(ignore: true)
   @override
@@ -138,13 +152,16 @@ class _$_ConnectionDetails implements _ConnectionDetails {
 
 abstract class _ConnectionDetails implements ConnectionDetails {
   const factory _ConnectionDetails(
-      {required final FlutterBlue instance,
-      final BluetoothDevice? device}) = _$_ConnectionDetails;
+      {final FlutterBlue? instance,
+      final BluetoothDevice? device,
+      final int? rssi}) = _$_ConnectionDetails;
 
   @override
-  FlutterBlue get instance;
+  FlutterBlue? get instance;
   @override
   BluetoothDevice? get device;
+  @override
+  int? get rssi;
   @override
   @JsonKey(ignore: true)
   _$$_ConnectionDetailsCopyWith<_$_ConnectionDetails> get copyWith =>

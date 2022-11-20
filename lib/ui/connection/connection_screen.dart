@@ -53,7 +53,7 @@ class ConnectionScreen extends HookConsumerWidget {
                 ),
               ),
               StreamBuilder<List<ScanResult>>(
-                stream: details.instance.scanResults,
+                stream: details.instance!.scanResults,
                 initialData: const [],
                 builder: (c, snapshot) => Column(
                   children: snapshot.data!
@@ -74,7 +74,7 @@ class ConnectionScreen extends HookConsumerWidget {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: StreamBuilder<bool>(
-          stream: details.instance.isScanning,
+          stream: details.instance!.isScanning,
           initialData: false,
           builder: (c, snapshot) {
             if (snapshot.data!) {
@@ -89,7 +89,7 @@ class ConnectionScreen extends HookConsumerWidget {
                 ),
                 child: NeumorphicButton(
                   padding: const EdgeInsets.all(12.0),
-                  onPressed: () => details.instance.stopScan(),
+                  onPressed: () => details.instance!.stopScan(),
                   style: NeumorphicStyle(
                     depth: -5,
                     color: const Color(0xFFF8F9FC),
@@ -137,9 +137,8 @@ class ConnectionScreen extends HookConsumerWidget {
                   padding: const EdgeInsets.all(12.0),
                   onPressed: () async {
                     try {
-                      final result = await details.instance
+                      final result = await details.instance!
                           .startScan(timeout: const Duration(seconds: 4));
-                      logger.d(result);
                     } catch (e) {
                       await showOkAlertDialog(
                         context: context,

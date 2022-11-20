@@ -81,13 +81,13 @@ class CustomAppBar extends HookConsumerWidget {
                 loading: () => Row(
                   children: const [
                     Icon(
-                      Icons.not_interested,
-                      color: Colors.grey,
+                      Icons.connect_without_contact_sharp,
+                      color: Color(0xFFfc7b03),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 16.0),
                       child: Text(
-                        'Disconnected',
+                        'Stable',
                       ),
                     ),
                   ],
