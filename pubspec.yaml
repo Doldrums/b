@@ -27,6 +27,7 @@ dependencies:
   ble_reader: ^0.1.1
   flutter_hooks: ^0.18.5+1
   flutter_sound: ^8.5.0
+  adaptive_dialog: ^1.8.0+1
 
 dev_dependencies:
   flutter_test:

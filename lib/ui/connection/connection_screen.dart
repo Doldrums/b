@@ -1,8 +1,10 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:b/ui/connection/widgets/widgets.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../main.dart';
 import '../../providers/ble_provider.dart';
 
 class ConnectionScreen extends HookConsumerWidget {
@@ -131,8 +133,21 @@ class ConnectionScreen extends HookConsumerWidget {
                 ),
                 child: NeumorphicButton(
                   padding: const EdgeInsets.all(12.0),
-                  onPressed: () => details.instance
-                      .startScan(timeout: const Duration(seconds: 4)),
+                  onPressed: () async {
+                    try {
+                      final result = await details.instance
+                          .startScan(timeout: const Duration(seconds: 4));
+                      logger.d(result);
+                    } catch (e) {
+                      await showOkAlertDialog(
+                        context: context,
+                        title: 'Ooops...',
+                        message:
+                            "It seems we don't support Bluetooth Low Energy wireless personal area network technology on your device yet.",
+                        barrierDismissible: false,
+                      );
+                    }
+                  },
                   style: NeumorphicStyle(
                     depth: -4,
                     color: const Color(0xFFF8F9FC),
